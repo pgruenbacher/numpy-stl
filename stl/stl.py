@@ -19,7 +19,7 @@ except ImportError:  # pragma: no cover
     _speedups = None
 
 
-class Mode(enum.IntEnum):
+class Mode(enum.Enum):
     #: Automatically detect whether the output is a TTY, if so, write ASCII
     #: otherwise write BINARY
     AUTOMATIC = 0

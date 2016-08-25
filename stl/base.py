@@ -17,7 +17,7 @@ VECTORS = 3
 DIMENSIONS = 3
 
 
-class Dimension(enum.IntEnum):
+class Dimension(enum.Enum):
     #: X index (for example, `mesh.v0[0][X]`)
     X = 0
     #: Y index (for example, `mesh.v0[0][Y]`)
@@ -42,7 +42,7 @@ class RemoveDuplicates(enum.Enum):
 
     @classmethod
     def map(cls, value):
-        if value and value in cls:
+        if value and value in cls.__dict__.values():
             pass
         elif value:
             value = cls.SINGLE
@@ -133,7 +133,7 @@ class BaseMesh(logger.Logged, collections.Mapping):
         if remove_empty_areas:
             data = self.remove_empty_areas(data)
 
-        if RemoveDuplicates.map(remove_duplicate_polygons).value:
+        if RemoveDuplicates.map(remove_duplicate_polygons):
             data = self.remove_duplicate_polygons(data,
                                                   remove_duplicate_polygons)
 
