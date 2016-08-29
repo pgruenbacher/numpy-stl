@@ -17,7 +17,7 @@ VECTORS = 3
 DIMENSIONS = 3
 
 
-class Dimension(enum.Enum):
+class Dimension(enum.IntEnum):
     #: X index (for example, `mesh.v0[0][X]`)
     X = 0
     #: Y index (for example, `mesh.v0[0][Y]`)
