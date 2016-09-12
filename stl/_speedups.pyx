@@ -1,5 +1,5 @@
 
-from libc.stdio cimport *                                                                
+from libc.stdio cimport *
 from libc.string cimport memcpy, strcmp, strstr, strcpy
 
 IF UNAME_SYSNAME == u"Windows":
@@ -87,7 +87,7 @@ def ascii_read(fh, buf):
     cdef size_t offset;
     cdef Facet* facet = <Facet*>arr.data
     cdef size_t pos = 0
-    cdef State state 
+    cdef State state
 
     try:
         state.size = len(buf)
@@ -104,7 +104,7 @@ def ascii_read(fh, buf):
             raise RuntimeError(state.recoverable,
                     "Solid name not found (%i:%s)" % (state.line_num, line))
 
-        strcpy(name, line+5)		
+        strcpy(name, line+5)
 
         while True:
 
@@ -115,7 +115,8 @@ def ascii_read(fh, buf):
                 arr.resize(facet - <Facet*>arr.data, refcheck=False)
                 return (<object>name).strip(), arr
 
-            if strcmp(line, "color") == 0:
+            # paul: changed from strcmp to strstr (startswith)
+            if strstr(line, "color") != NULL:
                 readline(&state)
                 continue
             elif sscanf(line, "%*s %*s %f %f %f",
@@ -152,13 +153,13 @@ def ascii_write(fh, name, np.ndarray[Facet, mode = 'c', cast=True] arr):
     cdef Facet* facet = <Facet*>arr.data
     cdef Facet* end = <Facet*>arr.data + arr.shape[0]
     cdef size_t pos = 0
-    
+
     try:
         fp = fdopen(dup(fh.fileno()), 'wb')
         fseek(fp, fh.tell(), SEEK_SET)
         fprintf(fp, 'solid %s\n', <char*>name)
         while facet != end:
-            fprintf(fp, 
+            fprintf(fp,
                 "facet normal %f %f %f\n"
                 "  outer loop\n"
                 "    vertex %f %f %f\n"
@@ -176,4 +177,4 @@ def ascii_write(fh, name, np.ndarray[Facet, mode = 'c', cast=True] arr):
         pos = ftell(fp)
         fclose(fp)
         fh.seek(pos, SEEK_SET)
-        
+
