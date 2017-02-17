@@ -115,7 +115,8 @@ def ascii_read(fh, buf):
                 arr.resize(facet - <Facet*>arr.data, refcheck=False)
                 return (<object>name).strip(), arr
 
-            if strcmp(line, "color") == 0:
+            # paul: changed from strcmp to strstr (startswith)
+            if strstr(line, "color") != NULL:
                 readline(&state)
                 continue
             elif sscanf(line, "%*s %*s %f %f %f",

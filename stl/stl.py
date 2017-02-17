@@ -68,6 +68,7 @@ class BaseStl(base.BaseMesh):
                 name, data = cls._load_ascii(
                     fh, header, speedups=speedups)
             except RuntimeError as exception:
+                raise
                 (recoverable, e) = exception.args
                 # If we didn't read beyond the header the stream is still
                 # readable through the binary reader

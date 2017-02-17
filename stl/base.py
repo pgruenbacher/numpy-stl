@@ -141,10 +141,7 @@ class BaseMesh(logger.Logged, collections.Mapping):
         self.data = data
 
         points = self.points = data['vectors']
-        self.points.shape = data.size, 9
-        self.x = points[:, Dimension.X::3]
-        self.y = points[:, Dimension.Y::3]
-        self.z = points[:, Dimension.Z::3]
+        self.points = points.reshape(-1, points.shape[-1])
         self.v0 = data['vectors'][:, 0]
         self.v1 = data['vectors'][:, 1]
         self.v2 = data['vectors'][:, 2]
@@ -154,6 +151,22 @@ class BaseMesh(logger.Logged, collections.Mapping):
 
         if calculate_normals:
             self.update_normals()
+
+    @property
+    def x(self):
+        return self.points[:, 0]
+
+    @property
+    def y(self):
+        return self.points[:, 1]
+
+    @property
+    def z(self):
+        return self.points[:, 2]
+
+    @property
+    def vertices(self):
+        return self.vectors
 
     @classmethod
     def remove_duplicate_polygons(cls, data, value=RemoveDuplicates.SINGLE):
@@ -415,4 +428,9 @@ class BaseMesh(logger.Logged, collections.Mapping):
         for point in self.points:
             yield point
 
+    def __add__(self, other):
+        print ("__ADDD!!!")
+        return self.points + other
 
+    def __sub__(self, other):
+        return self.points - other
