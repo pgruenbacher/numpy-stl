@@ -429,7 +429,6 @@ class BaseMesh(logger.Logged, collections.Mapping):
             yield point
 
     def __add__(self, other):
-        print ("__ADDD!!!")
         return self.points + other
 
     def __sub__(self, other):
