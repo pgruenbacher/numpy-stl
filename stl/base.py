@@ -164,6 +164,10 @@ class BaseMesh(logger.Logged, collections.Mapping):
     def z(self):
         return self.points[:, 2]
 
+    @property
+    def vertices(self):
+        return self.vectors
+
     @classmethod
     def remove_duplicate_polygons(cls, data, value=RemoveDuplicates.SINGLE):
         value = RemoveDuplicates.map(value)
