@@ -25,6 +25,7 @@ class Dimension(enum.IntEnum):
     #: Z index (for example, `mesh.v0[0][Z]`)
     Z = 2
 
+
 # For backwards compatibility, leave the original references
 X = Dimension.X
 Y = Dimension.Y
@@ -140,6 +141,13 @@ class BaseMesh(logger.Logged, collections.Mapping):
         self.name = name
         self.data = data
 
+        self.set_properties()
+
+        if calculate_normals:
+            self.update_normals()
+
+    def set_properties(self):
+        data = self.data
         points = self.points = data['vectors']
         self.points = points.reshape(-1, points.shape[-1])
         self.v0 = data['vectors'][:, 0]
@@ -148,9 +156,6 @@ class BaseMesh(logger.Logged, collections.Mapping):
         self.normals = data['normals']
         self.vectors = data['vectors']
         self.attr = data['attr']
-
-        if calculate_normals:
-            self.update_normals()
 
     @property
     def x(self):

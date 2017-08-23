@@ -5,6 +5,7 @@ import io
 import os
 import enum
 import numpy
+import codecs
 import struct
 import datetime
 
@@ -27,6 +28,7 @@ class Mode(enum.Enum):
     ASCII = 1
     #: Force writing BINARY
     BINARY = 2
+
 
 # For backwards compatibility, leave the original references
 AUTOMATIC = Mode.AUTOMATIC
@@ -63,7 +65,7 @@ class BaseStl(base.BaseMesh):
 
         name = ''
 
-        if mode in (AUTOMATIC, ASCII) and header.startswith(b('solid')):
+        if mode in (AUTOMATIC, ASCII) and not is_binary_file(fh):
             try:
                 name, data = cls._load_ascii(
                     fh, header, speedups=speedups)
@@ -116,7 +118,8 @@ class BaseStl(base.BaseMesh):
                 pass
 
         name = header.strip()
-
+        name = name.replace('\x00', '')
+        name = str(name)
         # Read the rest of the binary data
         return name, numpy.fromfile(fh, dtype=cls.dtype, count=count)
 
@@ -161,7 +164,8 @@ class BaseStl(base.BaseMesh):
                 elif line.startswith(b('color')):
                     return get(prefix)
                 else:
-                    print(line, line.startswith('color'), line.startswith(b('color')))
+                    print(line, line.startswith('color'),
+                          line.startswith(b('color')))
                     raise RuntimeError(recoverable[0],
                                        '%r should start with %r' % (line,
                                                                     prefix))
@@ -235,10 +239,12 @@ class BaseStl(base.BaseMesh):
             self.update_normals()
 
         if mode is AUTOMATIC:
-            if fh and os.isatty(fh.fileno()):  # pragma: no cover
-                write = self._write_ascii
-            else:
-                write = self._write_binary
+            # if fh and os.isatty(fh.fileno()):  # pragma: no cover
+            write = self._write_ascii
+            # don't write to binary unless explicit in case
+            # we're doing multiple solids
+            # else:
+                # write = self._write_binary
         elif mode is BINARY:
             write = self._write_binary
         elif mode is ASCII:
@@ -311,6 +317,7 @@ class BaseStl(base.BaseMesh):
         :param dict \**kwargs: The same as for :py:class:`stl.mesh.Mesh`
 
         '''
+
         if fh:
             name, data = cls.load(
                 fh, mode=mode, speedups=speedups)
@@ -354,3 +361,21 @@ class BaseStl(base.BaseMesh):
 
 StlMesh = BaseStl.from_file
 
+
+#: BOMs to indicate that a file is a text file even if it contains zero bytes.
+_TEXT_BOMS = (
+    codecs.BOM_UTF16_BE,
+    codecs.BOM_UTF16_LE,
+    codecs.BOM_UTF32_BE,
+    codecs.BOM_UTF32_LE,
+    codecs.BOM_UTF8,
+)
+
+
+def is_binary_file(fh):
+    seek = fh.tell()
+    # with open(source_path, 'rb') as source_file:
+    initial_bytes = fh.read(8192)
+    fh.seek(seek)
+    return not any(initial_bytes.startswith(bom) for bom in _TEXT_BOMS) \
+        and b'\0' in initial_bytes
