@@ -117,12 +117,12 @@ def ascii_read(fh, buf):
 
             # paul: changed from strcmp to strstr (startswith)
             if strstr(line, "color") != NULL:
-                readline(&state)
+                # readline(&state)
                 continue
             elif sscanf(line, "%*s %*s %f %f %f",
                     facet.n, facet.n+1, facet.n+2) != 3:
                 raise RuntimeError(state.recoverable,
-                    "Can't read normals (%i:%s)" % (state.line_num, line))
+                    "Can't read normals! (%i:%s)" % (state.line_num, line))
 
             readline(&state) # outer loop
 

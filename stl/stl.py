@@ -158,7 +158,10 @@ class BaseStl(base.BaseMesh):
                         position = fh.tell()
                         fh.seek(position - size_unprocessedlines)
                     raise StopIteration()
+                elif line.startswith(b('color')):
+                    return get(prefix)
                 else:
+                    print(line, line.startswith('color'), line.startswith(b('color')))
                     raise RuntimeError(recoverable[0],
                                        '%r should start with %r' % (line,
                                                                     prefix))
