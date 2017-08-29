@@ -56,7 +56,8 @@ class BaseStl(base.BaseMesh):
         :param file fh: The file handle to open
         :param int mode: Automatically detect the filetype or force binary
         '''
-        header = fh.read(HEADER_SIZE).lower()
+        # header = fh.read(HEADER_SIZE).lower()
+        header = fh.read(HEADER_SIZE)
         if not header:
             return
 
@@ -147,7 +148,8 @@ class BaseStl(base.BaseMesh):
                 lines[:] = b(fh.read(BUFFER_SIZE)).split(b('\n'))
                 line += lines.pop(0)
 
-            line = line.lower().strip()
+            # line = line.lower().strip()
+            line = line.strip()
             if line == b(''):
                 return get(prefix)
 
