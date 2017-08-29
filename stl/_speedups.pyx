@@ -49,7 +49,7 @@ cdef inline char tolower(char c):
 cdef char* readline(State* state) except NULL:
 
     cdef size_t line_pos = 0
-    cdef char current;
+    cdef char current
     while True:
         if state.pos == state.size:
 
@@ -84,7 +84,7 @@ def ascii_read(fh, buf):
     cdef char* line
     cdef char name[LINE_SIZE]
     cdef np.ndarray[Facet, cast=True] arr = np.zeros(ALLOC_SIZE, dtype = dtype)
-    cdef size_t offset;
+    cdef size_t offset
     cdef Facet* facet = <Facet*>arr.data
     cdef size_t pos = 0
     cdef State state
