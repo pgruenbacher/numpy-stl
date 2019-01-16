@@ -61,7 +61,7 @@ if __name__ == '__main__':
         packages=['stl'],
         long_description=long_description,
         tests_require=['pytest'],
-        setup_requires=['pytest-runner'],
+        #setup_requires=['pytest-runner'],
         entry_points={
             'console_scripts': [
                 'stl = %s.main:main' % about['__import_name__'],
