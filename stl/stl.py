@@ -182,10 +182,10 @@ class BaseStl(base.BaseMesh):
 
         line = get()
         if not line.lstrip().startswith(b('solid ')) and line.lstrip().startswith(b('solid')):
-            cls.warning('ASCII STL files should start with solid <space>. '
+            print('ASCII STL files should start with solid <space>. '
                         'The application that produced this STL file may be '
                         'faulty, please report this error. The erroneous '
-                        'line: %r', line)
+                        'line: %r' %  line)
 
         if not lines:
             raise RuntimeError(recoverable[0],
